@@ -8,13 +8,13 @@ jobs:
       - run:
           name: Install npm dependencies
           command: npm install --save
-      - run:
-          name: Run unit tests
-          command: ./node_modules/mocha/bin/mocha test/ --reporter mochaawesome --reporter-options reportDir=test-results, reportFileName=test-results
-      - store_test_results:
-          path: test-results
-      - store_artifacts:
-          path: test-results
+      # - run:
+      #     name: Run unit tests
+      #     command: ./node_modules/mocha/bin/mocha test/ --reporter mochaawesome --reporter-options reportDir=test-results, reportFileName=test-results
+      # - store_test_results:
+      #     path: test-results
+      # - store_artifacts:
+      #     path: test-results
 workflows:
   build_test:
     jobs:
