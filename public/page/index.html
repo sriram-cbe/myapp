@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Proshark</title>
+    </head>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: 5% 10% auto;
+            background: #f8f8f8;
+        }
+        
+        .grid-item {
+            padding: 10px;
+            font-size: 19px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+
+<body ng-app="myApp">
+    <div class="grid-container">
+        <div class="grid-item">
+            <img src="/images/logo.png" style="height: 40px;">
+        </div>
+        <div class="grid-item" style="margin-top: 8px;">Pro Shark</div>
+    </div>
+    <div ng-view></div>
+    <script>
+        var app = angular.module("myApp", ["ngRoute"]);
+        app.config(function ($routeProvider) {
+            $routeProvider
+                .when("/verifyAccount", {
+                    templateUrl: "verifyAccount.html"
+                })
+                .otherwise({
+                    template: "Page not found"
+                });
+        });
+
+        app.controller('myCtrl1', ['$scope', '$routeParams', '$http', function ($scope, $routeParams, $http) {
+            $scope.appCalling = false;
+            // $scope.message = "Account Verified."
+            console.log('$routeParams', $routeParams, $routeParams.accessToken)
+
+            if($routeParams.accessToken) {
+                $http.post('/users/verifyEmailByUser', {}, {
+                    headers: {
+                        'x-access-token': $routeParams.accessToken
+                    }
+                }).then((data) => {
+                    $scope.appCalling = true;
+                    $scope.message = data.data.message
+                    console.log('data', data);
+                    
+                }, (error) => {
+                    $scope.appCalling = true;
+                    $scope.message = error.data.message
+                });
+            } else {
+                $scope.appCalling = true;
+                $scope.message = "Invalid url"
+            }
+            
+        }]);
+    </script>
+</body>
+
+</html>

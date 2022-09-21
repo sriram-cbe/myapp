@@ -1,0 +1,54 @@
+<html>
+    <head>
+
+    </head>
+    <body>
+        <input type="text" id="name" placeholder="Enter your Name">
+        <input type="text" id="toUser" placeholder="To User">
+        <button onclick="onClickAddMe()" id="addMe">Add Me</button>
+        <input type="text" id="messageText" placeholder="Message Text">
+        <button onclick="onClickSend()" id="send">Send</button>
+        <script src="socket.io.js"></script>
+        <script>
+            const socket = io('http://localhost:3045');
+            socket.connect();
+            
+            socket.on('myMessage', (data) => {
+                console.log('myMessage data', data);
+            });
+
+            socket.on('ack', (data) => {
+                console.log('ack data', data);
+            });
+
+            document.getElementById('addMe').disabled = false;
+            document.getElementById('toUser').disabled = false;
+            document.getElementById('name').disabled = false;
+
+            document.getElementById('messageText').disabled = true;
+            document.getElementById('send').disabled = true;
+
+            function onClickAddMe() {
+                console.log('onClickAddMe');
+                socket.emit('create', {
+                    name: document.getElementById('name').value
+                })
+
+                document.getElementById('addMe').disabled = true;
+                document.getElementById('toUser').disabled = true;
+                document.getElementById('name').disabled = true;
+
+                document.getElementById('messageText').disabled = false;
+                document.getElementById('send').disabled = false;
+            }
+
+            function onClickSend() {
+                socket.emit('message', {
+                    name: document.getElementById('name').value,
+                    to: document.getElementById('toUser').value,
+                    message: document.getElementById('messageText').value
+                });
+            }
+        </script>
+    </body>
+</html>

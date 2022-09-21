@@ -1,0 +1,16 @@
+{
+    "project": {
+        "port": 3045,
+        "jwtSecret": "@h3@re@p1se3retkey02",
+        "url": "localhost:3045",
+        "host": "localhost"
+    },
+
+    "database" : {
+        "username" : "myappuser",
+        "password" : "Welcome123",
+        "port" : "27017",
+        "host" : "localhost",
+        "database" : "myapp"
+    }
+}
