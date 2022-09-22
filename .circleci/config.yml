@@ -1,43 +1,43 @@
 version: 2.1
-
 orbs:
-  slack: circleci/slack@4.3.0
-
-commands:
-  notify_slack_error:
+  heroku: circleci/heroku@0.0.10
+  slack: circleci/slack@4.1
+  jobs:
+    build:
+    docker:
+      - image: circleci/node:10.16.3
+    working_directory: ~/search-yc-top-companies
     steps:
+      - checkout
+      # install dependencies
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - run:
+          name: Build
+          command: npm run build
+  status:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run: echo "Sending status"
       - slack/notify:
           event: fail
           template: basic_fail_1
-
-  notify_slack_pass:
-    steps:
       - slack/notify:
           event: pass
-          template: basic_success_1
-
-jobs:
-  deploy:
-    docker:
-      - image: circleci/node:12.18.0
-    resource_class: medium
-    steps:
-      - trigger_slack_notification
-      - checkout
-      - run:
-          name: Install packages
-          command: npm install
-      - run:
-          name: Installing Firebase-Tools
-          command: npm install firebase-tools
-      - run:
-          name: Firebase Set Project Id
-          command: ./node_modules/.bin/firebase use default --token $FIREBASE_DEVELOP_DEPLOY_TOKEN
-      - run:
-          name: Build App
-          command: npm run build:app
-      - run:
-          name: Deploy All
-          command: ./node_modules/.bin/firebase deploy --token $FIREBASE_DEVELOP_DEPLOY_TOKEN --only functions,hosting,storage --force
-      - notify_slack_error
-      - notify_slack_pass
+          template: success_tagged_deploy_1
+workflows:
+  heroku_deploy:
+    jobs:
+      - build
+      - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - status:
+          requires:
+            - build
+            - heroku/deploy-via-git
