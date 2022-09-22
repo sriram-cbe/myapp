@@ -1,40 +1,31 @@
-# version: 2.1
-# jobs:
-#   build:
-#     docker:
-#       - image: circleci/node:16
-#     steps:
-#       - checkout
-#       - run: npm install --save
-#       - run: npm test
-
 version: 2.1
+
 orbs:
-  slack: circleci/slack@4.1
-jobs:
-  notify:
-    docker:
-      - image: "cimg/base:stable"
+  slack: circleci/slack@4.3.0
+
+commands:
+  notify_slack_error:
     steps:
       - slack/notify:
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "*This is a text notification*",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
-          event: always
-workflows:
-  send-notification:
-    jobs:
-      - notify:
-          context: slack-secrets
+          event: fail
+          template: basic_fail_1
+
+  notify_slack_pass:
+    steps:
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+
+jobs:
+  deploy:
+    docker:
+      - image: circleci/node:12.18.0
+    resource_class: medium
+    steps:
+      - trigger_slack_notification
+      - checkout
+      - run:
+          name: Install packages
+          command: npm install
+      - notify_slack_error
+      - notify_slack_pass
