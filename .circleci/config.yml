@@ -4,29 +4,29 @@ orbs:
   slack: circleci/slack@4.1
   jobs:
     build:
-    docker:
-      - image: circleci/node:10.16.3
-    working_directory: ~/search-yc-top-companies
-    steps:
-      - checkout
-      # install dependencies
-      - run:
-          name: Install Dependencies
-          command: npm install
-      - run:
-          name: Build
-          command: npm run build
-  status:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - run: echo "Sending status"
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
+      docker:
+        - image: circleci/node:10.16.3
+      working_directory: ~/search-yc-top-companies
+      steps:
+        - checkout
+        # install dependencies
+        - run:
+            name: Install Dependencies
+            command: npm install
+        - run:
+            name: Build
+            command: npm run build
+    status:
+      docker:
+        - image: cimg/base:stable
+      steps:
+        - run: echo "Sending status"
+        - slack/notify:
+            event: fail
+            template: basic_fail_1
+        - slack/notify:
+            event: pass
+            template: success_tagged_deploy_1
 workflows:
   heroku_deploy:
     jobs:
