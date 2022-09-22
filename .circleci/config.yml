@@ -6,7 +6,6 @@ orbs:
     build:
       docker:
         - image: circleci/node:10.16.3
-      working_directory: ~/search-yc-top-companies
       steps:
         - checkout
         # install dependencies
