@@ -27,5 +27,17 @@ jobs:
       - run:
           name: Install packages
           command: npm install
+      - run:
+          name: Installing Firebase-Tools
+          command: npm install firebase-tools
+      - run:
+          name: Firebase Set Project Id
+          command: ./node_modules/.bin/firebase use default --token $FIREBASE_DEVELOP_DEPLOY_TOKEN
+      - run:
+          name: Build App
+          command: npm run build:app
+      - run:
+          name: Deploy All
+          command: ./node_modules/.bin/firebase deploy --token $FIREBASE_DEVELOP_DEPLOY_TOKEN --only functions,hosting,storage --force
       - notify_slack_error
       - notify_slack_pass
